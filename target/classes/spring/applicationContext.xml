@@ -95,6 +95,26 @@
      	<property name="connectionProperties" value="config.decrypt=true;config.decrypt.key=${publicKey}" /> 
     </bean>
     
+    <!-- 配置从数据源datasource -->
+	<bean id="slave02DataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.slave02.driver}"></property>    
+		<property name="url" value="${jdbc.slave02.url}"></property>    
+		<property name="username" value="${jdbc.slave02.username}"></property>
+		<property name="password" value="${jdbc.slave02.password}"></property>
+		<!-- 配置初始化大小、最小、最大 -->
+        <property name="initialSize" value="10" />
+        <property name="minIdle" value="10" />
+        <property name="maxActive" value="20" />
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait" value="60000" />
+        <!-- 配置监控统计拦截的filters -->
+  		<property name="filters" value="stat,config" />
+  		
+  		<!-- 密码加密，明文显示不安全，由于配置了druid监控，因此把加密的filters和监控的配置在一起 -->
+  		<!-- <property name="filters" value="config" /> -->  
+     	<property name="connectionProperties" value="config.decrypt=true;config.decrypt.key=${publicKey}" /> 
+    </bean>
+    
 	<!-- 配置mybatis,不需要配置文件 -->
 	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"></property>
@@ -178,6 +198,7 @@
                 <!-- 这些设置的key和determineCurrentLookupKey方法拿到的key相比对, 根据匹配选择数据源 -->
                 <entry key="master" value-ref="masterDataSource"/>
                 <entry key="slave01" value-ref="slave01DataSource"/>
+                <entry key="slave02" value-ref="slave02DataSource"/>
             </map>
         </property>
         <!-- 设置默认的数据源，这里默认走写库 -->
